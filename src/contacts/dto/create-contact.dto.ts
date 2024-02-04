@@ -9,7 +9,8 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { NoEmojis } from '../../decorators/NoEmoji.decorator';
+import { NoEmojis } from '../../validators/NoEmoji.validator';
+import { CountryRequiredWithZipCode } from '../../validators/CountryRequiredWithZipCode.validator';
 
 class PhoneDto {
   @Max(14, { message: 'Field `number` must be 10 or 15 characters' })
@@ -46,6 +47,7 @@ class AddressDto {
     message: 'The `country` field length must not be more than 2 characters"',
   })
   @NoEmojis({ message: 'The `country` field contains invalid characters' })
+  @CountryRequiredWithZipCode()
   @IsString({ message: 'Field `country` must be a string' })
   country: string;
 
