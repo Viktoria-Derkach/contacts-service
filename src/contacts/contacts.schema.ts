@@ -13,7 +13,7 @@ export class CompanySchema {
   name: string;
 
   @Prop()
-  jobTitle: string;
+  job_title: string;
 }
 
 export class AddressSchema {
@@ -33,17 +33,30 @@ export class AddressSchema {
   apartment: string;
 
   @Prop()
-  zipCode: string;
+  zip_code: string;
 }
 
 @Schema()
 export class Contacts {
+  @Prop()
   email: string;
-  firstName: string;
-  lastName: string;
+
+  @Prop()
+  first_name: string;
+
+  @Prop()
+  last_name: string;
+
+  @Prop()
   description: string;
+
+  @Prop()
   phone: PhoneSchema;
+
+  @Prop()
   company: CompanySchema;
+
+  @Prop()
   address: AddressSchema;
 }
 

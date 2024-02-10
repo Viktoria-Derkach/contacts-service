@@ -12,7 +12,7 @@ export class ContactsService {
   ) {}
 
   async create(dto: CreateContactDto) {
-    return this.contactsModel.create(dto);
+   return this.contactsModel.create(dto);
   }
 
   async findById(id: string) {
