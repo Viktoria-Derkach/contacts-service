@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   Post,
@@ -36,5 +38,14 @@ export class ContactsController {
     }
 
     return contact;
+  }
+
+  @HttpCode(204)
+  @Delete(':id')
+  async delete(@Param('id', IdValidationPipe) id: string) {
+    const contact = await this.contactsService.deleteById(id);
+    if (!contact) {
+      throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
+    }
   }
 }
