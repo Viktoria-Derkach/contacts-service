@@ -11,10 +11,10 @@ import {
 } from 'class-validator';
 import { NoEmojis } from '../../validators/NoEmoji.validator';
 import { CountryRequiredWithZipCode } from '../../validators/CountryRequiredWithZipCode.validator';
+import { InvalidDomain } from '../../validators/InvalidDomain.validator';
 
 class PhoneDto {
-  @Max(14, { message: 'Field `number` must be 10 or 15 characters' })
-  @Min(5)
+  @Length(5, 14)
   @IsString({ message: 'Field `number` must be a string' })
   number: string;
 
@@ -24,101 +24,68 @@ class PhoneDto {
   @IsISO31661Alpha2()
   @IsString({ message: 'Field `country_code` must be a string' })
   @NoEmojis({ message: 'The `country_code` field contains invalid characters' })
-  countryCode: string;
+  country_code: string;
 }
 class CompanyDto {
-  @Max(30)
-  @Min(2)
+  @Length(2, 30)
   @IsString()
   name: string;
 
-  @Max(128, {
-    message:
-      'The `job_title` field length must not be more than 128 characters',
-  })
-  @Min(2)
+  @Length(2, 128)
   @NoEmojis({ message: 'The `job_title` field contains invalid characters' })
   @IsString({ message: 'Field `job_title` must be a string' })
-  jobTitle: string;
+  job_title: string;
 }
 class AddressDto {
-  @Max(30)
-  @Min(2, {
-    message: 'The `country` field length must not be more than 2 characters"',
-  })
+  @Length(2, 30)
   @NoEmojis({ message: 'The `country` field contains invalid characters' })
   @CountryRequiredWithZipCode()
   @IsString({ message: 'Field `country` must be a string' })
   country: string;
 
-  @Max(128, {
-    message: 'The `state` field length must not be more than 128 characters',
-  })
-  @Min(2)
+  @Length(2, 128)
   @NoEmojis({ message: 'The `state` field contains invalid characters' })
   @IsString({ message: 'Field `state` must be a string' })
   state: string;
 
-  @Max(128, {
-    message: 'The `city` field length must not be more than 128 characters',
-  })
-  @Min(2)
+  @Length(2, 128)
   @NoEmojis({ message: 'The `city` field contains invalid characters' })
   @IsString({ message: 'Field `city` must be a string' })
   city: string;
 
-  @Max(255, {
-    message: 'The `street` field length must not be more than 255 characters',
-  })
-  @Min(2)
+  @Length(2, 255)
   @NoEmojis({ message: 'The `street` field contains invalid characters' })
   @IsString({ message: 'Field `street` must be a string' })
   street: string;
 
-  @Max(255, {
-    message:
-      'The `apartment` field length must not be more than 255 characters',
-  })
-  @Min(2)
+  @Length(2, 255)
   @NoEmojis({ message: 'The `apartment` field contains invalid characters' })
   @IsString({ message: 'Field `apartment` must be a string' })
   apartment: string;
 
-  @Max(10, {
-    message: 'The `zip_code` field length must not be more than 10 characters',
-  })
-  @IsPostalCode()
+  @Length(2, 10)
   @IsString({ message: 'Field `zip_code` must be a string' })
-  zipCode: string;
+  zip_code: string;
 }
 
 export class CreateContactDto {
+  @InvalidDomain({
+    message: 'Not allowed to create a contact with @no.reply domain',
+  })
   @IsEmail()
   email: string;
 
-  @Max(128, {
-    message:
-      'The `first_name` field length must not be more than 128 characters',
-  })
-  @Min(128)
+  @Length(2, 128)
   @NoEmojis({ message: 'The `first_name` field contains invalid characters' })
-  @IsString({ message: 'Field `first_name` must be a string' })
-  firstName: string;
+  @IsString()
+  first_name: string;
 
-  @Max(128, {
-    message:
-      'The `last_name` field length must not be more than 128 characters',
-  })
-  @Min(2)
+  @Length(2, 128)
   @NoEmojis({ message: 'The `last_name` field contains invalid characters' })
   @IsString({ message: 'Field `last_name` must be a string' })
-  lastName: string;
+  last_name: string;
 
-  @Max(408, {
-    message:
-      'The `description` field length must not be more than 408 characters',
-  })
-  @Min(2)
+  @Length(2, 408)
   @NoEmojis({ message: 'The `description` field contains invalid characters' })
   @IsString({ message: 'Field `description` must be a string' })
   description: string;
