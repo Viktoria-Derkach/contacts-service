@@ -7,13 +7,18 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { IdValidationPipe } from '../pipes/ad-validation.pipe';
-import { CONTACT_NOT_FOUND_ERROR } from './contacts.constants';
+import {
+  CONTACT_NOT_FOUND_ERROR,
+  EMAIL_IS_NOT_EDITABLE,
+} from './contacts.constants';
 
 @Controller('contacts')
 export class ContactsController {
@@ -47,5 +52,38 @@ export class ContactsController {
     if (!contact) {
       throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
     }
+  }
+
+  @HttpCode(204)
+  @Put(':id')
+  async update(
+    @Param('id', IdValidationPipe) id: string,
+    @Body() dto: CreateContactDto,
+  ) {
+    const contact = await this.contactsService.findById(id);
+    if (!contact) {
+      throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
+    }
+    if (contact.email !== dto.email) {
+      throw new NotFoundException(EMAIL_IS_NOT_EDITABLE);
+    }
+    const updatedContact = await this.contactsService.update(contact, dto);
+
+    if (!updatedContact) {
+      throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
+    }
+  }
+
+  @Get()
+  async getContacts(
+    @Query('page') page: number,
+    @Query('per_page') perPage: number,
+    @Query('filters') filters: string,
+  ): Promise<any> {
+    // Parse the filters string to JSON
+    const parsedFilters = JSON.parse(filters);
+    console.log(filters, 'filters1');
+
+    return this.contactsService.getContacts(page, perPage, filters);
   }
 }

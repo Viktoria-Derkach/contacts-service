@@ -2,11 +2,8 @@ import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsISO31661Alpha2,
-  IsPostalCode,
   IsString,
   Length,
-  Max,
-  Min,
   ValidateNested,
 } from 'class-validator';
 import { NoEmojis } from '../../validators/NoEmoji.validator';

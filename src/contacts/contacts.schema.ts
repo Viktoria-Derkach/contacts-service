@@ -36,6 +36,17 @@ export class AddressSchema {
   zip_code: string;
 }
 
+export class MetaSchema {
+  @Prop()
+  created_at: number;
+
+  @Prop()
+  interacted_at: number;
+
+  @Prop()
+  updated_at: number;
+}
+
 @Schema()
 export class Contacts {
   @Prop()
@@ -58,6 +69,9 @@ export class Contacts {
 
   @Prop()
   address: AddressSchema;
+
+  @Prop()
+  meta: MetaSchema;
 }
 
 export const ContactsSchema = SchemaFactory.createForClass(Contacts);
