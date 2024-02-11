@@ -26,6 +26,10 @@ export class ContactsService {
     return this.contactsModel.findById(id).exec();
   }
 
+  async findByEmail(email: string) {
+    return this.contactsModel.findOne({ email }).exec();
+  }
+
   async deleteById(id: string) {
     return this.contactsModel.findByIdAndDelete(id).exec();
   }

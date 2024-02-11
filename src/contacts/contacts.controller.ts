@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UnprocessableEntityException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { IdValidationPipe } from '../pipes/ad-validation.pipe';
 import {
+  CONTACT_ALREADY_EXISTS,
   CONTACT_NOT_FOUND_ERROR,
   EMAIL_IS_NOT_EDITABLE,
 } from './contacts.constants';
@@ -27,7 +29,14 @@ export class ContactsController {
   @UsePipes(new ValidationPipe())
   @Post('create')
   async create(@Body() dto: CreateContactDto) {
+    const exitContact = await this.contactsService.findByEmail(dto.email);
+
+    if (exitContact) {
+      throw new UnprocessableEntityException(CONTACT_ALREADY_EXISTS);
+    }
+
     const contact = await this.contactsService.create(dto);
+
     return {
       data: {
         id: contact._id,
@@ -65,7 +74,7 @@ export class ContactsController {
       throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
     }
     if (contact.email !== dto.email) {
-      throw new NotFoundException(EMAIL_IS_NOT_EDITABLE);
+      throw new UnprocessableEntityException(EMAIL_IS_NOT_EDITABLE);
     }
     const updatedContact = await this.contactsService.update(contact, dto);
 
