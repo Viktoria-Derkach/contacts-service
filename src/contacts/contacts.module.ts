@@ -12,5 +12,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     ]),
   ],
   providers: [ContactsService],
+  exports: [ContactsService],
 })
 export class ContactsModule {}
