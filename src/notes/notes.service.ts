@@ -49,7 +49,7 @@ export class NotesService {
       .exec();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+  deleteById(id: string) {
+    return this.notesModel.findByIdAndDelete(id).exec();
   }
 }

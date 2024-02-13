@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   NotFoundException,
@@ -14,12 +13,12 @@ import {
 } from '@nestjs/common';
 import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
 import { ContactsService } from '../contacts/contacts.service';
 import {
   CONTACT_NOT_FOUND_ERROR,
   NOTE_NOT_FOUND_ERROR,
 } from './contacts.constants';
+import { IdValidationPipe } from '../pipes/ad-validation.pipe';
 
 @Controller('contacts/:contactId/notes')
 export class NotesController {
@@ -76,8 +75,21 @@ export class NotesController {
     await this.notesService.update(note, updateNoteDto);
   }
 
-  @Delete(':contactId')
-  remove(@Param('contactId') contactId: string) {
-    return this.notesService.remove(+contactId);
+  @HttpCode(204)
+  @Delete(':noteId')
+  async delete(
+    @Param('contactId') contactId: string,
+    @Param('noteId', IdValidationPipe) noteId: string,
+  ) {
+    const contact = await this.contactsService.findById(contactId);
+    if (!contact) {
+      throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
+    }
+
+    const note = await this.notesService.deleteById(noteId);
+
+    if (!note) {
+      throw new NotFoundException(NOTE_NOT_FOUND_ERROR);
+    }
   }
 }
