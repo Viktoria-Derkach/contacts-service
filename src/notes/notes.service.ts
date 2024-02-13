@@ -1,9 +1,8 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
 import { Notes } from './entities/note.entity';
 
 @Injectable()
@@ -29,15 +28,23 @@ export class NotesService {
     return this.notesModel.findById(noteId).exec();
   }
 
-  update(noteId: string, note: any, updateNoteDto: any) {
-    console.log(updateNoteDto, 'updateNoteDto');
-
+  update(
+    note: CreateNoteDto & {
+      email: string;
+      created_at: number;
+      _id: Types.ObjectId;
+    },
+    updateNoteDto: CreateNoteDto,
+  ) {
     return this.notesModel
       .updateOne(
-        { _id: noteId },
-
-        { ...note, ...updateNoteDto, updated_at: new Date() },
-        // { new: true },
+        { _id: note._id },
+        {
+          ...updateNoteDto,
+          created_at: note.created_at,
+          email: note.email,
+          updated_at: new Date(),
+        },
       )
       .exec();
   }

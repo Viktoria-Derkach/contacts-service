@@ -16,7 +16,10 @@ import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { ContactsService } from '../contacts/contacts.service';
-import { CONTACT_NOT_FOUND_ERROR } from './contacts.constants';
+import {
+  CONTACT_NOT_FOUND_ERROR,
+  NOTE_NOT_FOUND_ERROR,
+} from './contacts.constants';
 
 @Controller('contacts/:contactId/notes')
 export class NotesController {
@@ -60,14 +63,17 @@ export class NotesController {
     @Body() updateNoteDto: CreateNoteDto,
   ) {
     const note = await this.notesService.findById(noteId);
+    const contact = await this.contactsService.findById(contactId);
 
-    const newNote = {
-      ...note,
-      note: updateNoteDto.note,
-    };
+    if (!contact) {
+      throw new NotFoundException(CONTACT_NOT_FOUND_ERROR);
+    }
 
-    const aaaa = await this.notesService.update(noteId, note, updateNoteDto);
-    console.log(aaaa, note, updateNoteDto, newNote, 'aaaa');
+    if (!note) {
+      throw new NotFoundException(NOTE_NOT_FOUND_ERROR);
+    }
+
+    await this.notesService.update(note, updateNoteDto);
   }
 
   @Delete(':contactId')
