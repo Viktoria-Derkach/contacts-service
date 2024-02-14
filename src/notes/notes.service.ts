@@ -4,6 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { CreateNoteDto } from './dto/create-note.dto';
 import { Notes } from './entities/note.entity';
+import { getCreatedAtValue } from './utils';
+import { ICollection } from './interfaces.notes';
 
 @Injectable()
 export class NotesService {
@@ -26,6 +28,38 @@ export class NotesService {
 
   findById(noteId: string) {
     return this.notesModel.findById(noteId).exec();
+  }
+
+  async getNotes(
+    page: number,
+    perPage: number,
+    collection: ICollection,
+  ): Promise<any> {
+    const ids = collection?.ids ? { _id: { $in: collection.ids } } : {};
+    const createdAt = getCreatedAtValue(collection?.created_at);
+
+    const notes = await this.notesModel
+      .find({ ...ids, ...createdAt })
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ created_at: -1 })
+      .exec();
+
+    // const total = await this.notesModel.countDocuments(filters);
+
+    return {
+      data: notes,
+      meta: {
+        pagination: {
+          // total,
+          count: notes.length,
+          per_page: perPage,
+          current_page: page,
+          // total_pages: Math.ceil(total / perPage),
+          links: [],
+        },
+      },
+    };
   }
 
   update(
